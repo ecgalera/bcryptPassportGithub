@@ -1,0 +1,12 @@
+[
+	{
+		"title": "Pan",
+		"description": "Pan Casero",
+		"thumnails": "foto",
+		"code": "345",
+		"price": 456,
+		"status": true,
+		"category": "panaderia",
+		"id": 1
+	}
+]
