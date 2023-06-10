@@ -2,9 +2,10 @@ import passport from "passport";
 import local from "passport-local";
 import UserManager from "../dao/fs/mongodb/manager/userManager.js";
 import { createHash, validatePassword } from "../utils.js";
+import GithubStrategy from "passport-github2"
 
 const um = new UserManager();
-
+// local es la unica que se inicializa el resto no es necesario solo la importo y vasta
 const LocalStrategy = local.Strategy;
 // Inicializo todas las estrategias: 
 const initializePassportStrategie = ()=>{
@@ -79,6 +80,40 @@ passport.use(
       }
     )
   );
+
+// github strategy -----------------------------------------------
+passport.use(
+  'github',
+  new GithubStrategy(
+    {
+      clientID: "Iv1.f93323255a7d9ea2",
+      clientSecret: '7222df9c42306403fe1a41ef9f93cf32872db1b9',
+      callbackURL: 'http://localhost:8080/api/session/githubcallback',
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        // console.log(profile);
+        //Tomo los datos que me sirvan.
+        const { name, email } = profile._json;
+        const user = await um.getUser({ email });
+        //DEBO GESTIONAR AMBAS LÓGICAS AQUÍ, OMG!!!
+        if(!user) {
+          //No existe? lo creo entonces.
+          const newUser =  {
+            nombre:name,
+            email: email,
+            password:''
+          }
+          const result = await um.createUser(newUser);
+          }
+        //Si el usuario ya existía, Qué mejor!!! 
+        done(null,user);
+        // console.log(user)
+      } catch (error) {
+        done(error);
+      }}));
+
+// realizadores ---------------------------------------------------
 
   passport.serializeUser(function (user, done) {
     return done(null, user.id);
