@@ -8,9 +8,11 @@ import session from "express-session"
 import viewsRouter from "./router/viewsRouter/viewsRouter.js";
 import productRouter from "./router/mongodb/productRouter.js";
 import cartRouter from "./router/mongodb/cartRouter.js";
-import ProductsRouter from "./router/fs_router/ProductRouter.js"
-import cartsRouter from "./router/fs_router/cartRouter.js"
-import sessionRoutes from "./router/mongodb/sessionRoutes.js"
+import ProductsRouter from "./router/fs_router/ProductRouter.js";
+import cartsRouter from "./router/fs_router/cartRouter.js";
+import sessionRoutes from "./router/mongodb/sessionRoutes.js";
+import initializePassportStrategies from "./config/passport.config.js";
+import passport from "passport";
 
 
 const app = express();
@@ -43,6 +45,9 @@ app.use("/api/cart", cartRouter);
 app.use("/api/products", ProductsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/session/", sessionRoutes)
+// passport inicializacion
+app.use(passport.initialize());
+initializePassportStrategies();
 
 const server = app.listen(8080, ()=>{
     console.log("Listen on port: 8080")
